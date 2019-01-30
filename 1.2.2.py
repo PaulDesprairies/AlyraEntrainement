@@ -9,7 +9,7 @@ from itertools import *
 transactions = [[600,1500], [700, 1500], [800, 2000], [1000, 2800], [1200, 3500], [1300, 5000], [2000, 13000], [6000, 9000]]
    
 
-#on trie la liste par le tips
+#on trie la liste par le tips pour chaque transaction unique
 transactions_trie = sorted(transactions, key=lambda l:l[1], reverse=True)
 
 
