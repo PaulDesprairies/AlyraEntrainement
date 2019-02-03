@@ -43,12 +43,14 @@ for x in texte :
     
     if x.isspace() :
         nouveau_texte += x
-        x.
     else:
         if x.isupper():
             x=x.lower()
             upper = 1
-        nombre_crypt = (Alphabet.get(x[0]) + nombre)%26 + 1
+
+        nombre_crypt = (Alphabet.get(x[0]) + nombre)%26
+        if nombre_crypt == 0:
+            nombre_crypt = 26
         for lettre, index in Alphabet.items():
             if index == nombre_crypt :
                 if upper == 1:
