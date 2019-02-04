@@ -28,18 +28,22 @@ Alphabet = [["a",1],
 Alphabet = dict(Alphabet)
 
 #Fonction César
-def Cesar_inverse(texte, nombre):
+def Cesar(texte, nombre, option):
     nombre_crypt = 0
     nouveau_texte = ""
     upper = 0
-
+    #print(nombre)
     for x in texte :
+        #print(Alphabet.get(x[0]))
         if x.isupper():
             x=x.lower()
             upper = 1
-        if nombre / Alphabet.get(x[0]) > 1:
-            nombre -= (26 * int(nombre / Alphabet.get(x[0])))
-        nombre_crypt = (Alphabet.get(x[0]) - nombre)
+        if option == "1":
+            if nombre / Alphabet.get(x[0]) > 1:
+                nombre -= 26
+            nombre_crypt = (Alphabet.get(x[0]) - nombre)
+        if option == "0" :
+            nombre_crypt = (Alphabet.get(x[0]) + nombre)%26
         if nombre_crypt == 0:
             nombre_crypt = 26
         for lettre, index in Alphabet.items():
@@ -57,14 +61,14 @@ def clef_adaptee(texte,clef):
     return clef_adaptee
 
 #Fonction finale
-def Vigenere_inverse(texte,clef):
+def Vigenere(texte,clef,option):
     encrypt_text=""
     i=0
     ca = clef_adaptee(texte,clef)
     while i < lt :
-        encrypt_text += Cesar_inverse(texte[i],Alphabet.get(ca[i])-1)
+        encrypt_text += Cesar(texte[i],Alphabet.get(ca[i])-1, option)
         i += 1
-    print(encrypt_text)
+    return encrypt_text
 
 #Fonction de traitement d'entrées (pas d'espaces)
 def space_killer(texte):
@@ -88,8 +92,19 @@ def only_alpha(clef):
     return clef.lower()
 
 
+#Fonction normale ou inverse ?
+option = -1
+while option != "1" and option != "0" :
+    option = input("Pour chiffrer tapez 0, pour déchiffrer tapez 1 :")
+
 #Saisie et pré-traitement du texte à coder
-texte = input("Ce que vous voulez déchiffrer :")
+conclusions=""
+if option == "1":
+    texte = input("Ce que vous voulez déchiffrer :")
+    conclusion = "Le déchiffrement donne :"
+if option == "0":
+    texte = input("Ce que vous voulez chiffrer :")
+    conclusion = "Le chiffrement donne :"
 texte = space_killer(texte)
 lt = len(texte)
 
@@ -100,4 +115,4 @@ lc = len(clef)
 
 
 #Appel de fonction
-Vigenere_inverse(texte,clef)
+print(conclusion, Vigenere(texte,clef, option))
