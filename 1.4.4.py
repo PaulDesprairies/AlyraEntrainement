@@ -35,13 +35,11 @@ def decomposition_output(texte):
     subNbSorties = texte[0:2]
     subMontant = texte[2:18]
     subTailleScript = texte[18:20]
-    subTailleScriptPubKey = texte[20:22]
-    subScriptPubKey = texte[22:]
+    subScriptPubKey = texte[20:]
 
     print("Output / Nombre de sorties :",subNbSorties)
     print("Output / Montant :",subMontant)
     print("Output / Taile du script :",subTailleScript)
-    print("Output / Taille du ScriptPubKey :",subTailleScriptPubKey)
     print("Output / ScriptPubKey :",subScriptPubKey)
     
 
