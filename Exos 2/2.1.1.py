@@ -1,1 +1,8 @@
 
+cible = "1147152896345386682952518188670047452875537662186691235300769792000"
+cible_max=((2**16)-1)*(2**208)
+
+
+
+difficulte = cible_max/int(cible)
+print(difficulte)
