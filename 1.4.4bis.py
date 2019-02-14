@@ -57,14 +57,17 @@ byte2 = def_varInt(texte)
 i = 1
 while i <= byte2[1] :
         print("\n******************OUTPUT n°",i,"***********************************\n")
-        bc = petitEndien(texte[2*byte2[0]:8+byte2[0]])
+        bc = petitEndien(texte[2*byte2[0]:8+byte2[0]]) #erreur ici ?
         print("Montant Satoshis n°",i,":", bc, "Soit : ",int(bc, 16)/100000000, "bitcoins")
         ScriptPubKey_byte =texte[8+byte2[0]:]
         byte3 = def_varInt(ScriptPubKey_byte)
         ScriptPubKey_texte =ScriptPubKey_byte[2*byte3[0]:]
         print("ScriptPubKey n°",i,":",ScriptPubKey_texte[: 2*byte3[1]])
-        texte = ScriptPubKey_texte[: 2*byte3[1]]
+        print("Lockime n°",i,":",ScriptPubKey_texte[2*byte3[1]:8+2*byte3[1]])
+        texte = ScriptPubKey_texte[:8+2*byte3[1]]
         i = i + 1
+
+
 if check[-20:] == ScriptPubKey_texte[-20:] :
         print("check ok")
 else :
