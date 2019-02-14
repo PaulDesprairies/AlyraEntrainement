@@ -32,13 +32,13 @@ if len(texte)%2 == 1:
 byte0 = def_varInt(texte)
 print(byte0)
 i = 1
-while i <= byte0[0] :
+while i <= byte0[1] :
         print("\n*******************INPUT n°",i,"***********************************\n")
         print("Le hash n°",i," :", texte[2*byte0[0]:64+2*byte0[0]])
         print("Index de la sortie n°",i,":", texte[64+2*byte0[0]:72+2*byte0[0]])
         ScriptSig_byte = texte[72+2*byte0[0]:]
         byte1 = def_varInt(ScriptSig_byte)
-        byte11 = def_varInt(ScriptSig_byte[2:])
+        byte11 = def_varInt(ScriptSig_byte[2*byte1[0]:])
         ScriptSig_texte = ScriptSig_byte[2*byte1[0]+2*byte11[0]:]
         print("ScriptSig n°",i,":",ScriptSig_texte[: 2*byte11[1]])
         ScriptKey_byte = ScriptSig_texte[2*byte11[1]:]
@@ -55,9 +55,10 @@ while i <= byte0[0] :
 byte2 = def_varInt(texte)
 
 i = 1
-while i <= byte2[0] :
+while i <= byte2[1] :
         print("\n******************OUTPUT n°",i,"***********************************\n")
-        print("Montant Satoshis n°",i,":", texte[byte2[0]:8+byte2[0]], "Soit : ",int(texte[byte2[0]:8+byte2[0]], 16)/100000000, "bitcoins")
+        bc = petitEndien(texte[2*byte2[0]:8+byte2[0]])
+        print("Montant Satoshis n°",i,":", bc, "Soit : ",int(bc, 16)/100000000, "bitcoins")
         ScriptPubKey_byte =texte[8+byte2[0]:]
         byte3 = def_varInt(ScriptPubKey_byte)
         ScriptPubKey_texte =ScriptPubKey_byte[2*byte3[0]:]
