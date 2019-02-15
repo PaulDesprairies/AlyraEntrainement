@@ -13,7 +13,7 @@ function estmembre(address utilisateur) public view returns (bool){
      return true;
   i += 1;
    }
-  return false
+  return false;
  }
 
 }
