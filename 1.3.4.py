@@ -9,9 +9,9 @@ class CourbeElliptique:
            
     def __eq__(self, B):
         if self.a == B.a and self.b == B.b :
-            print("Les courbes sont les mêmes")
+            print(True)
         else :
-            print("Les courbes sont différentes")
+            print(False)
 
 
     def testPoint(self, x, y):
