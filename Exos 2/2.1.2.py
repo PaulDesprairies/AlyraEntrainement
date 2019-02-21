@@ -7,11 +7,10 @@ cible = str(cible)
 
 def extract_cible(data):
     i = 0
-    while i < zeroing:
+    while i < 2 * zeroing - 6:
         data = data + "0"
         i = i+1
     return data
-
 
 difficulte = cible_max/int(extract_cible(cible),16)
 print(difficulte)
