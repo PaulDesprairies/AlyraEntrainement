@@ -1,0 +1,142 @@
+<html>
+
+<head>
+    <title>Outil d'analyse bitcoin</title>
+    <meta charset="utf-8" />
+</head>
+
+<body>
+
+    <!--********************************************************************-->
+
+    <section>
+        <h3>Conversion hexadécimaux</h3>
+        Entier : <input type="number" value=345 id="decimal1"><br>
+        Hexadecimal : <span type="text" id="hexadecimal1"></span><br>
+        <button id="convertir">Convertir</button>
+        <br>
+    </section>
+    <script>
+        function convertDeciToHexa(h) {
+            h = parseInt(h);
+            hexa = h.toString(16);
+            if (h.length % 2 != 1) {
+                hexa = '0' + hexa;
+            }
+            return hexa;
+        }
+        document.getElementById("convertir").addEventListener("click", event => {
+            decimal1 = document.getElementById("decimal1").value
+            hexa = convertDeciToHexa(decimal1)
+            document.getElementById("hexadecimal1").innerHTML = "0x" + hexa
+            
+        })
+        
+    </script>
+    <!--********************************************************************-->
+    <section>
+        <h3>Conversion petit endien</h3>
+        Hexa Little Endien :<input type="text" value="000001FF" id="hle"><br>
+        Hexadecimal : <span type="text" id="hexadecimal2"></span><br>
+        Decimal : <span type="text" id="decimal2"></span><br>
+        <button id="convertHexaLE">Convertir</button>
+
+    </section>
+    <script>
+        function convertHexaLittleEndienToHexa(h) {
+            if (h.length % 2 == 1) {
+                h = '0' + h
+            }
+            let retour = "";
+            for (let i = 0; i < h.length - 1; i += 2) {
+                retour = h[i] + h[i + 1] + retour;
+            }
+            return retour;
+        }
+        document.getElementById("convertHexaLE").addEventListener("click", event => {
+            hle = document.getElementById("hle").value
+            hexa = convertHexaLittleEndienToHexa(hle)
+            document.getElementById("hexadecimal2").innerHTML = "0x" + hexa
+            document.getElementById("decimal2").innerHTML = parseInt(hexa, 16)
+
+        })
+
+    </script>
+    <!--********************************************************************-->
+    <section>
+        <h3>Lecture du varInt</h3>
+        Saisissez votre Hexadécimal :<input type="text" value="23a3c4e" id="hv"><br>
+        Longueur du VarInt : <span type="number" id="lv"></span><br>
+        Taille du VarInt : <span type="number" id="tv"></span><br>
+        <button id="AnalyserVarint">Analyser</button>
+    </section>
+    <script>
+        function def_varInt(texte) {
+
+            byte = parseInt(texte.slice(0, 2), 16);
+
+            if (byte < 253) {
+                return [1, byte];
+            } else if (byte == 253) {
+                return [3, convertHexaLittleEndienToHexa(texte.slice(2, 6).toString(16))];
+            } else if (byte == 254) {
+                return [5, convertHexaLittleEndienToHexa(texte.slice(2, 10).toString(16))];
+            } else if (byte == 254) {
+                return [9, convertHexaLittleEndienToHexa(texte.slice(2, 18).toString(16))];
+            } else {}
+        }
+        document.getElementById("AnalyserVarint").addEventListener("click", event => {
+            hv = document.getElementById("hv").value
+            var varInt = def_varInt(hv)
+
+            document.getElementById("lv").innerHTML = varInt[0]
+            document.getElementById("tv").innerHTML = varInt[1]
+        })
+
+    </script>
+    <!--********************************************************************-->
+    <section>
+        <h3>Extraction de la cible et de la difficulté via le champ Bits</h3>
+        Champ Bits :<input type="text" value="0x1c0ae493" id="CB"><br>
+        Difficulté : <span type="text" id="diff"></span><br>
+        Cible : <span type="text" id="cible"></span><br>
+        <button id="convertBitDiff">Convertir</button>
+    </section>
+
+    <script>
+        function ExpCoeff(header) {
+            var cible_max = ((2 ** 16) - 1) * (2 ** 208)
+            exp = parseInt(header.slice(0, 4), 16)
+            coeff = convertDeciToHexa(parseInt(header.slice(4, header.length), 16))
+            return [exp, coeff];
+        }
+
+        function extract_cible(data) {
+            var i = 0;
+            while (i < 2 * BitToDiff(header)[0] - 6) {
+                data = data + "0";
+                i += 1
+            }
+
+            var cible = parseInt(extract_cible(coeff), 16);
+            var difficulte = cible_max / cible;
+
+            return [cible, difficulte];
+        }
+
+        document.getElementById("convertBitDiff").addEventListener("click", event => {
+            CB = document.getElementById("CB").value
+            var CibleDifficulte = extract_cible(CB)
+
+            document.getElementById("cible").innerHTML = CibleDifficulte[0]
+            document.getElementById("diff").innerHTML = CibleDifficulte[1]
+        })
+
+    </script>
+
+
+
+
+</body>
+
+</html>
