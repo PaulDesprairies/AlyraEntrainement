@@ -36,7 +36,7 @@
     <!--********************************************************************-->
     <section>
         <h3>Conversion petit endien</h3>
-        Hexa Little Endien :<input type="text" value="000001FF" id="hle"><br>
+        Hexa Little Endien : 0x<input type="text" value="000001FF" id="hle"><br>
         Hexadecimal : <span type="text" id="hexadecimal2"></span><br>
         Decimal : <span type="text" id="decimal2"></span><br>
         <button id="convertHexaLE">Convertir</button>
@@ -65,7 +65,7 @@
     <!--********************************************************************-->
     <section>
         <h3>Lecture du varInt</h3>
-        Saisissez votre Hexadécimal :<input type="text" value="23a3c4e" id="hv"><br>
+        Saisissez votre Hexadécimal : 0x<input type="text" value="23a3c4e" id="hv"><br>
         Longueur du VarInt : <span type="number" id="lv"></span><br>
         Taille du VarInt : <span type="number" id="tv"></span><br>
         <button id="AnalyserVarint">Analyser</button>
@@ -97,30 +97,24 @@
     <!--********************************************************************-->
     <section>
         <h3>Extraction de la cible et de la difficulté via le champ Bits</h3>
-        Champ Bits :<input type="text" value="0x1c0ae493" id="CB"><br>
+        Champ Bits : 0x<input type="text" value="1c0ae493" id="CB"><br>
         Difficulté : <span type="text" id="diff"></span><br>
         Cible : <span type="text" id="cible"></span><br>
         <button id="convertBitDiff">Convertir</button>
     </section>
 
     <script>
-        function ExpCoeff(header) {
-            var cible_max = ((2 ** 16) - 1) * (2 ** 208)
-            exp = parseInt(header.slice(0, 4), 16)
-            coeff = convertDeciToHexa(parseInt(header.slice(4, header.length), 16))
-            return [exp, coeff];
-        }
-
-        function extract_cible(data) {
+        function extract_cible(header) {
+            cible_max = ((2 ** 16) - 1) * (2 ** 208); //cible max
+            exp = parseInt(header.slice(0, 2), 16); // exp
+            coeff = header.slice(2, header.length); // coeff
+            cible = coeff // cible
             var i = 0;
-            while (i < 2 * BitToDiff(header)[0] - 6) {
-                data = data + "0";
-                i += 1
+            while (i < 2 * exp - 6) {
+                cible = cible + "0";
+                i += 1;
             }
-
-            var cible = parseInt(extract_cible(coeff), 16);
-            var difficulte = cible_max / cible;
-
+            difficulte = cible_max / parseInt(cible, 16); // difficulé
             return [cible, difficulte];
         }
 
@@ -133,9 +127,6 @@
         })
 
     </script>
-
-
-
 
 </body>
 
