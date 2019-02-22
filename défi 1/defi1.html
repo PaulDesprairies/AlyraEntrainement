@@ -128,6 +128,160 @@
 
     </script>
 
+    <!--********************************************************************-->
+    <section>
+        <h3>Extraction des informations d'un transaction bitcoin</h3>
+        Transaction bitcoin : 0x<input type="text" value="0100000001f129de033c57582efb464e94ad438fff493cc4de4481729b85971236858275c2010000006a4730440220155a2ea4a702cadf37052c87bfe46f0bd24809759acff8d8a7206979610e46f6022052b688b784fa1dcb1cffeef89e7486344b814b0c578133a7b0bce5be978a9208012103915170b588170cbcf6380ef701d19bd18a526611c0c69c62d2c29ff6863d501affffffff02ccaec817000000001976a9142527ce7f0300330012d6f97672d9acb5130ec4f888ac18411a000000000017a9140b8372dffcb39943c7bfca84f9c40763b8fa9a068700000000" id="tx"><br>
+        <button id="analyserTransaction">Analyser</button><br />
+        Version: <span id="Version"></span><br />
+        Input : <span id="Input"></span><br />
+        Output : <span id="Output"></span><br />
+        Locktime :<span id="Locktime"></span><br />
+
+    </section>
+    <script>
+        function get_version(tx) {
+
+            version = tx.slice(0, 8); // stockage de la version de la transaction
+            texte = tx.slice(8);
+            if (texte.length % 2 == 1) {
+                texte = "0" + texte
+            }
+            return [texte, version];
+        }
+
+        function get_input(texte) {
+            varIntInput = def_varInt(texte); // récupération du nombre d'inputs 
+            temp1 = varIntInput[0]
+
+            var inputs = new Array(varIntInput[1] + 1);
+            for (var i = 0; i < inputs.length; i++) {
+                inputs[i] = new Array(6)
+            }
+            inputs[0][0] = "Numéro de l'input"
+            inputs[0][1] = "Hash"
+            inputs[0][2] = "Index de sortie"
+            inputs[0][3] = "ScriptSig"
+            inputs[0][4] = "ScriptKey"
+            inputs[0][5] = "Séquence"
+
+            var i = 0
+            while (i < varIntInput[1]) { // décomposition des inputs
+                inputs[i + 1][0] = i + 1;
+                inputs[i + 1][1] = texte.slice(2 * temp1, 64 + 2 * temp1);
+                inputs[i + 1][2] = texte.slice(64 + 2 * temp1, 72 + 2 * temp1);
+                ScriptSig_byte = texte.slice(72 + 2 * temp1);
+                varIntScriptSig1 = def_varInt(ScriptSig_byte);
+                varIntScriptSig2 = def_varInt(ScriptSig_byte.slice(2 * varIntScriptSig1[0]));
+                ScriptSig_texte = ScriptSig_byte.slice(2 * varIntScriptSig1[0] + 2 * varIntScriptSig2[0]);
+                inputs[i + 1][3] = ScriptSig_texte.slice(0, 2 * varIntScriptSig2[1]);
+                ScriptKey_byte = ScriptSig_texte.slice(2 * varIntScriptSig2[1]);
+                varIntScriptKey = def_varInt(ScriptKey_byte);
+                ScriptKey_texte = ScriptKey_byte.slice(2 * varIntScriptKey[0]);
+                inputs[i + 1][4] = ScriptKey_texte.slice(0, 2 * varIntScriptKey[1]);
+                inputs[i + 1][5] = ScriptKey_texte.slice(2 * varIntScriptKey[1], 2 * varIntScriptKey[1] + 8);
+                texte = ScriptKey_texte.slice(2 * varIntScriptKey[1] + 8);
+                temp1 = 0;
+                i += 1;
+            }
+            return [texte, inputs];
+        }
+
+        function get_output(texte) {
+
+            varIntOutput = def_varInt(texte); // récupération du nombre d'inputs 
+            temp2 = varIntOutput[0]
+
+            var outputs = new Array(varIntOutput[1] + 1);
+            for (i = 0; i < outputs.length; i++) {
+                outputs[i] = new Array(3)
+            }
+            outputs[0][0] = "Numéro de l'output"
+            outputs[0][1] = "Montant bitcoin"
+            outputs[0][2] = "ScriptPubKey"
+
+            i = 0
+            while (i < varIntOutput[1]) { // décomposition des inputs
+                outputs[i + 1][0] = i + 1;
+                bc = convertHexaLittleEndienToHexa(texte.slice(2 * temp2, 2 * (8 + temp2)));
+                outputs[i + 1][1] = parseInt(bc, 16) / 100000000;
+                ScriptPubKey_byte = texte.slice(2 * (8 + temp2));
+                varIntPubKey = def_varInt(ScriptPubKey_byte);
+                ScriptPubKey_texte = ScriptPubKey_byte.slice(2 * varIntPubKey[0]);
+                outputs[i + 1][2] = ScriptPubKey_texte.slice(0, 2 * varIntPubKey[1]);
+                texte = ScriptPubKey_texte.slice(2 * (varIntPubKey[1]));
+                temp2 = 0;
+                i += 1;
+            }
+            return [texte, outputs];
+        }
+
+        function get_locktime(texte) {
+            locktime = texte;
+            return locktime;
+
+        }
+
+        document.getElementById("analyserTransaction").addEventListener("click", event => {
+            tx = document.getElementById("tx").value
+
+            // on récupère les résultats
+            var version_f = get_version(tx);
+            var input_f = get_input(version_f[0]);
+            var output_f = get_output(input_f[0]);
+            var locktime_f = get_locktime(output_f[0]);
+
+            // création d'un tableau pour les résultats inputs
+            var bodyInput = document.getElementsByTagName("body")[0];
+            var tableInput = document.createElement('table');
+            var bodyTableInput = document.createElement("tbody");
+            tableInput.setAttribute('border', '1');
+            tableInput.setAttribute('width', '50%');
+
+            for (var i = 0; i < 6; i++) {
+                var ligneInput = document.createElement("tr");
+                for (var j = 0; j < input_f[1].length; j++) {
+                    var cellInput = document.createElement("td");
+                    cellInput.innerHTML = input_f[1][j][i];
+                    ligneInput.appendChild(cellInput);
+                    bodyTableInput.appendChild(ligneInput);
+                    tableInput.appendChild(bodyTableInput);
+                    bodyInput.appendChild(tableInput);
+                }
+            }
+
+            // création d'un tableau pour les résultats outputs
+            var bodyOutput = document.getElementsByTagName("body")[0];
+            var tableOutput = document.createElement('table');
+            var bodyTableOutput = document.createElement("tbody");
+            tableOutput.setAttribute('border', '1');
+            tableOutput.setAttribute('width', '50%');
+
+            for (var i = 0; i < 3; i++) {
+                var ligneOutput = document.createElement("tr");
+                for (var j = 0; j < output_f[1].length; j++) {
+                    var cellOutput = document.createElement("td");
+                    cellOutput.innerHTML = output_f[1][j][i];
+                    ligneOutput.appendChild(cellOutput);
+                    bodyTableOutput.appendChild(ligneOutput);
+                    tableOutput.appendChild(bodyTableOutput);
+                    bodyOutput.appendChild(tableInput);
+
+                }
+            }
+
+
+            document.getElementById("Version").innerHTML = version_f[1]
+            document.getElementById("Input").appendChild(tableInput)
+            document.getElementById("Output").appendChild(tableOutput)
+            document.getElementById("Locktime").innerHTML = locktime_f
+
+
+
+        })
+
+    </script>
+
 </body>
 
 </html>
