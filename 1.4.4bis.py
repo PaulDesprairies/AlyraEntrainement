@@ -30,13 +30,13 @@ if len(texte)%2 == 1:
     texte = "0" + texte
 
 byte0 = def_varInt(texte)
-print(byte0)
+temp0 = byte0[0]
 i = 1
 while i <= byte0[1] :
         print("\n*******************INPUT n°",i,"***********************************\n")
-        print("Le hash n°",i," :", texte[2*byte0[0]:64+2*byte0[0]])
-        print("Index de la sortie n°",i,":", texte[64+2*byte0[0]:72+2*byte0[0]])
-        ScriptSig_byte = texte[72+2*byte0[0]:]
+        print("Le hash n°",i," :", texte[2*temp0:64+2*temp0])
+        print("Index de la sortie n°",i,":", texte[64+2*temp0:72+2*temp0])
+        ScriptSig_byte = texte[72+2*temp0:]
         byte1 = def_varInt(ScriptSig_byte)
         byte11 = def_varInt(ScriptSig_byte[2*byte1[0]:])
         ScriptSig_texte = ScriptSig_byte[2*byte1[0]+2*byte11[0]:]
@@ -47,28 +47,27 @@ while i <= byte0[1] :
         print("ScriptKey n°",i,":",ScriptKey_texte[: 2*byte12[1]])
         print("Séquence n°",i,":", ScriptKey_texte[2 * byte12[1]: 2* byte12[1] +8 ])
         texte = ScriptKey_texte[2* byte12[1]+8:]
-        i = i +1
+        temp0 = 0
+        i += 1
+        
         
 
 
 
 byte2 = def_varInt(texte)
-
+temp2 = byte2[0]
 i = 1
 while i <= byte2[1] :
         print("\n******************OUTPUT n°",i,"***********************************\n")
-        bc = petitEndien(texte[2*byte2[0]:8+byte2[0]]) #erreur ici ?
+        bc = petitEndien(texte[2*temp2:2*(8+temp2)])
         print("Montant Satoshis n°",i,":", bc, "Soit : ",int(bc, 16)/100000000, "bitcoins")
-        ScriptPubKey_byte =texte[8+byte2[0]:]
+        ScriptPubKey_byte =texte[2*(8+temp2):]
         byte3 = def_varInt(ScriptPubKey_byte)
+        print(byte3, i)
         ScriptPubKey_texte =ScriptPubKey_byte[2*byte3[0]:]
         print("ScriptPubKey n°",i,":",ScriptPubKey_texte[: 2*byte3[1]])
-        print("Lockime n°",i,":",ScriptPubKey_texte[2*byte3[1]:8+2*byte3[1]])
-        texte = ScriptPubKey_texte[:8+2*byte3[1]]
-        i = i + 1
+        texte = ScriptPubKey_texte[2*(byte3[1]):]
+        temp2 = 0
+        i += 1
 
-
-if check[-20:] == ScriptPubKey_texte[-20:] :
-        print("check ok")
-else :
-        print("check not ok")
+print("Lockime:",texte)
