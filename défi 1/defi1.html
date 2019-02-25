@@ -16,6 +16,7 @@
         <button id="convertir">Convertir</button>
         <br>
     </section>
+
     <script>
         function convertDeciToHexa(h) {
             h = parseInt(h);
@@ -294,6 +295,8 @@
         Transaction validée : <span type="number" id="validation"></span>
 
     </section>
+    <script src="https://github.com/bitwiseshiftleft/sjcl.git"></script>
+
     <script>
         function parse_variable_length_string(hex_string) {
             var a = def_varInt(hex_string);
@@ -308,6 +311,7 @@
         class Stack {
             constructor() {
                 this._stack = [];
+                this._name = name;
             }
             pop() {
                 return this._stack.pop();
@@ -318,167 +322,76 @@
             push(value) {
                 this._stack.push(value);
             }
-        }
 
-        class Operation {
-            constructor(name) {
-                this._name = name;
+            pop_value(stack) {
+                return this._stack.pop()
             }
-        }
 
-        function pop_value(stack) {
-            value = stack.pop()
-            return value
-        }
+            pop_two_value(stack) {
+                value2 = stack.pop();
+                value1 = stack.pop();
+                return [value1, value2]
+            }
 
-        function pop_two_value(stack) {
-            value2 = stack.pop();
-            value1 = stack.pop();
-            return [value1, value2]
-        }
+            op_dup() {
+                this.push(this.peek());
+            }
 
-        class op_0 extends Operation {
-            op_0() {
-                super._name;
-            }
-            apply(stack) {
-                stack.push("00");
-            }
-        }
 
-        class op_1 extends Operation {
-            op_1() {
-                super._name;
-            }
-            apply(stack) {
-                stack.push("01");
-            }
-        }
-
-        class op_dup extends Operation {
-            constructor() {
-                super._name;
-            }
-            apply(stack) {
-                stack.push(stack.peek());
-            }
-        }
-
-        class op_add extends Operation {
             op_add() {
-                super._name;
-            }
-            apply(stack) {
                 var v = this.pop_two_values(stack);
                 v1, V2 = v;
                 stack.push(hex((parseInt(v1, 16) + parseInt(v2, 16))));
             }
-        }
 
-        class op_equalverify extends Operation {
             op_equalverify() {
-                super._name;
-            }
-            apply(stack) {
                 var v = this.pop_two_values(stack);
                 v1, V2 = v;
                 if (v1 != v2) {
-                    alert("op_equalverify {} != {}".format(v1, v2))
+                    return var rslt = (v1, v2);
+                } else {
+                    return var rslt = true;
                 }
             }
-        }
 
-        class op_hash160 extends Operation {
             op_hash160() {
-                super._name;
+                var hex_value = this.pop_value();
+                var hashOutput1 = sjcl.hash.sha256.hash(preImage1);
+                var hashOutput2 = sjcl.hash.ripemd.hash(preImage2);
+                stack.push(hashOutput2);
+                alert(hashOutput2);
             }
-            apply() {
-                sha = hashlib.sha256();
-                ripemd160 = hashlib.new('ripemd160');
-                hex_value = self.pop_value(stack);
-                sha.update(bytearray.fromhex(hex_value));
-                ripemd160.update(sha.digest());
-                stack.push(ripemd160.hexdigest());
-            }
-        }
 
-        class op_checksig extends Operation {
             op_checksig() {
-                super._name;
-            }
-
-
-            apply(self) {
                 this.pop_two_values(stack);
                 stack.push(True);
             }
-        }
 
-        class op_checklocktimeverify extends Operation {
             op_checklocktimeverify() {
-                super._name;
-            }
-
-            apply(stack) {
                 pass
-            }
-        }
-
-        class StackMachine {
-            OPERATIONS = {
-                //'00': op_0(),
-                //'51': op_1(),
-                dup: op_dup(),
-                //'93': op_add(),
-                equ: op_equalverify(),
-                hash: op_hash160(),
-                check: op_checksig(),
-                //'b1': op_checklocktimeverify()
-            };
-
-            constructor() {
-                this._stack = new Stack();
-            }
-
-
-            push_value(value) {
-                this._stack.push(value);
-            }
-
-
-            handle_operation(op) {
-                StackMachine.OPERATIONS[op].apply(this._stack)
-            }
-
-
-            push(hex_string) {
-                var a = parse_variable_length_string(hex_string);
-                this.push_value(a[0]);
-                return a[1];
             }
         }
 
 
         function check_p2pkh(scriptSig, scriptPubKey) {
-            machine = new Stackmachine();
+            machine = new Stack();
             var a = parse_variable_length_string(scriptSig);
             [sig, pub] = a;
-            machine.push_value(sig);
-            machine.push_valueush(pub);
-            machine.dup.apply()
-            machine.op_hash160.apply();
-            machine.push_value(scriptPubKey);
-            machine.op_equalverify.apply();
+            machine.push(sig);
+            machine.push(pub);
+            machine.op_dup()
+            machine.op_hash160();
+            machine.push(scriptPubKey);
+            var egalite = machine.op_equalverify()
 
-
-            return machine._stack.pop();
+            return egalite;
         }
 
         document.getElementById("AnalyserTransaction").addEventListener("click", event => {
             scriptSig = document.getElementById("scriptSig").value;
             scriptPubKey = document.getElementById("scriptPubKey").value;
             check_p2pkh(scriptSig, scriptPubKey);
-            document.getElementById("validation").innerHTML = machine._stack.pop();
+            document.getElementById("validation").innerHTML = egalite;
         })
 
     </script>
