@@ -150,6 +150,7 @@
             return [texte, version];
         }
 
+
         function get_input(texte) {
             varIntInput = def_varInt(texte); // récupération du nombre d'inputs 
             temp1 = varIntInput[0]
@@ -172,6 +173,7 @@
                 inputs[i + 1][2] = texte.slice(64 + 2 * temp1, 72 + 2 * temp1);
                 ScriptSig_byte = texte.slice(72 + 2 * temp1);
                 varIntScriptSig1 = def_varInt(ScriptSig_byte);
+
                 varIntScriptSig2 = def_varInt(ScriptSig_byte.slice(2 * varIntScriptSig1[0]));
                 ScriptSig_texte = ScriptSig_byte.slice(2 * varIntScriptSig1[0] + 2 * varIntScriptSig2[0]);
                 inputs[i + 1][3] = ScriptSig_texte.slice(0, 2 * varIntScriptSig2[1]);
@@ -281,6 +283,206 @@
         })
 
     </script>
+
+    <!--********************************************************************-->
+
+    <section>
+        <h3>Vérificateur de transaction P2PKH</h3>
+        Saisissez votre Scripsig : 0x <input type="text" value="483045022100d544eb1ede691f9833d44e5266e923dae058f702d2891e4ee87621a433ccdf4f022021e405c26b0483cd7c5636e4127a9510f3184d1994015aae43a228faa608362001210372cc7efb1961962bba20db0c6a3eebdde0ae606986bf76cb863fa460aee8475c" id="scriptSig"><br>
+        Saisissez votre scriptPubKey : 0x <input type="text" value="76a9147c3f2e0e3f3ec87981f9f2059537a355db03f9e888ac" id="scriptPubKey"><br>
+        <button id="AnalyserTransaction">Analyser</button><br>
+        Transaction validée : <span type="number" id="validation"></span>
+
+    </section>
+    <script>
+        function parse_variable_length_string(hex_string) {
+            var a = def_varInt(hex_string);
+            [varInt_size, str_len] = a;
+            start = 2 * varInt_size;
+            end = start + 2 * str_len;
+            focus = hex_string.slice(start, end);
+            reste = hex_string.slice(end);
+            return [focus, reste];
+        }
+
+        class Stack {
+            constructor() {
+                this._stack = [];
+            }
+            pop() {
+                return this._stack.pop();
+            }
+            peek() {
+                return this._stack[-1];
+            }
+            push(value) {
+                this._stack.push(value);
+            }
+        }
+
+        class Operation {
+            constructor(name) {
+                this._name = name;
+            }
+        }
+
+        function pop_value(stack) {
+            value = stack.pop()
+            return value
+        }
+
+        function pop_two_value(stack) {
+            value2 = stack.pop();
+            value1 = stack.pop();
+            return [value1, value2]
+        }
+
+        class op_0 extends Operation {
+            op_0() {
+                super._name;
+            }
+            apply(stack) {
+                stack.push("00");
+            }
+        }
+
+        class op_1 extends Operation {
+            op_1() {
+                super._name;
+            }
+            apply(stack) {
+                stack.push("01");
+            }
+        }
+
+        class op_dup extends Operation {
+            constructor() {
+                super._name;
+            }
+            apply(stack) {
+                stack.push(stack.peek());
+            }
+        }
+
+        class op_add extends Operation {
+            op_add() {
+                super._name;
+            }
+            apply(stack) {
+                var v = this.pop_two_values(stack);
+                v1, V2 = v;
+                stack.push(hex((parseInt(v1, 16) + parseInt(v2, 16))));
+            }
+        }
+
+        class op_equalverify extends Operation {
+            op_equalverify() {
+                super._name;
+            }
+            apply(stack) {
+                var v = this.pop_two_values(stack);
+                v1, V2 = v;
+                if (v1 != v2) {
+                    alert("op_equalverify {} != {}".format(v1, v2))
+                }
+            }
+        }
+
+        class op_hash160 extends Operation {
+            op_hash160() {
+                super._name;
+            }
+            apply() {
+                sha = hashlib.sha256();
+                ripemd160 = hashlib.new('ripemd160');
+                hex_value = self.pop_value(stack);
+                sha.update(bytearray.fromhex(hex_value));
+                ripemd160.update(sha.digest());
+                stack.push(ripemd160.hexdigest());
+            }
+        }
+
+        class op_checksig extends Operation {
+            op_checksig() {
+                super._name;
+            }
+
+
+            apply(self) {
+                this.pop_two_values(stack);
+                stack.push(True);
+            }
+        }
+
+        class op_checklocktimeverify extends Operation {
+            op_checklocktimeverify() {
+                super._name;
+            }
+
+            apply(stack) {
+                pass
+            }
+        }
+
+        class StackMachine {
+            OPERATIONS = {
+                //'00': op_0(),
+                //'51': op_1(),
+                dup: op_dup(),
+                //'93': op_add(),
+                equ: op_equalverify(),
+                hash: op_hash160(),
+                check: op_checksig(),
+                //'b1': op_checklocktimeverify()
+            };
+
+            constructor() {
+                this._stack = new Stack();
+            }
+
+
+            push_value(value) {
+                this._stack.push(value);
+            }
+
+
+            handle_operation(op) {
+                StackMachine.OPERATIONS[op].apply(this._stack)
+            }
+
+
+            push(hex_string) {
+                var a = parse_variable_length_string(hex_string);
+                this.push_value(a[0]);
+                return a[1];
+            }
+        }
+
+
+        function check_p2pkh(scriptSig, scriptPubKey) {
+            machine = new Stackmachine();
+            var a = parse_variable_length_string(scriptSig);
+            [sig, pub] = a;
+            machine.push_value(sig);
+            machine.push_valueush(pub);
+            machine.dup.apply()
+            machine.op_hash160.apply();
+            machine.push_value(scriptPubKey);
+            machine.op_equalverify.apply();
+
+
+            return machine._stack.pop();
+        }
+
+        document.getElementById("AnalyserTransaction").addEventListener("click", event => {
+            scriptSig = document.getElementById("scriptSig").value;
+            scriptPubKey = document.getElementById("scriptPubKey").value;
+            check_p2pkh(scriptSig, scriptPubKey);
+            document.getElementById("validation").innerHTML = machine._stack.pop();
+        })
+
+    </script>
+
 
 </body>
 
