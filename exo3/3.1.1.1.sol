@@ -19,13 +19,13 @@ function sInscrire(string nomArtiste) public {
   }
 
 function passerArtisteSuivant() public{
-  if (tour < 12){
+  if (tour < 12 - creneauxLibres){
       tour +=1;
   }
 }
 
 function artisteEnCours() public constant returns (string){
-  if (tour == 12){
+  if (tour == 12 - creneauxLibres){
     fin = 1;
   }
   if (fin==1){

@@ -11,6 +11,7 @@ using SafeMath for uint256;
   uint private dernierPaiement;
   uint private comptabiliserRecettes;
   uint8 private balance;
+  address private addresseFinale;
   uint public nbSMax;
   uint public dateFestival;
   uint public dateLiquidation;
@@ -27,22 +28,19 @@ using SafeMath for uint256;
 
 
 
-  constructor(uint nbSponsorMax, uint date, uint montant) public{
+  constructor(uint nbSponsorMax, uint date, uint montant, address af) public{
     organisateur[msg.sender] = 100;
     nbSMax = nbSponsorMax;
     dateFestival = date;
     dateLiquidation = date + 2 weeks;
     montantMaxJour = montant;
+    addresseFinale = af;
   }
 
 
   function estOrga(address orga) view public returns (bool){
     // assuming any organizer detain a non zero share
-    if (organisateur[orga] > 0){
-      return true;
-    }else{
-      return false;
-    }
+    require(organisateur[orga] > 0,"Cette adresse n'est pas celle d'un organisateur");
   }
 
   function transfererOrga(address orga, uint8 parts) public {
@@ -57,7 +55,7 @@ using SafeMath for uint256;
     uint8 i =0;
     while (i < 14){
       depensesTotales = depensesJournalieres[i];
-      i+=1;
+      i+= 1;
     }
     return depensesTotales;
   }
@@ -88,8 +86,8 @@ using SafeMath for uint256;
   }
 
   function timeline() public view returns (uint){
-    uint jour = (dateLiquidation - dateFestival) / 14;
-    return jour = ((now - dateFestival) % jour) ;
+    uint jour = (((now - dateFestival) / jour) * 14 ) / (dateLiquidation - dateFestival);
+    return jour ;
   }
 
   function retraitOrga() public payable{
@@ -102,80 +100,89 @@ using SafeMath for uint256;
     // recomptage avant autodestruction
     balance += organisateur[msg.sender];
     if (balance == 100){
-      selfdestruct(msg.sender);
+      selfdestruct(addresseFinale);
     }
   }
 }
+////////:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::://///////////////
 
 contract Loterie is Festival {
+  uint public jLoterie;
   uint8 festivalCount;
   uint cagnotte;
-  int[] public tiragesJournaliers;
+  uint[] public tiragesJournaliers;
+  uint win;
 
   struct Tirage{
     address joueur;
-    uint8 tiragePerso;
-    uint8 jour;
-    bool victoire;
-  }
+    uint tiragePerso;
+    uint jour;
+      }
+  
+//mapper les adresses gagnantes
+  mapping (address => bool) victoire;
+
 //mapper les loteries choisies par les joueurs (1 ou 2) et les jours de loterie
-  mapping (uint8 => uint8) calendrier;
+  mapping (uint8 => uint) calendrier;
 
 Tirage[] tirages;
 
+  constructor(uint jourLoterie) public{
+    require(jourLoterie < 5 && jourLoterie > 0, "Merci de sélectionner un chiffre entre 1 et 5");
+    jLoterie = jourLoterie - 1;
+    calendrier[1] = jLoterie ;
+    calendrier[2] = jLoterie + 5;
+    calendrier[3] = jLoterie + 10;
+  } 
 
-function acheterTicketDebut(uint8 numero, uint8 unOuDeux) payable public {
+
+function acheterTicketDebut(uint8 numero) payable public {
 require(festivaliers[msg.sender] = true,"Seul un festivalier peut acheter un ticket de loterie.");
 require(msg.value>100 finney,"Ticket à 0,10 Ether"); 
-  if (festivalCount == 0){
-require(unOuDeux == 1 || unOuDeux == 2, "Merci de choisir 1 pour participer à la loterie de premier jour et 2 pour participer à la loterie du second jour.");
-}else if (festivalCount == 1){
-require(unOuDeux == 2, "Seule la seconde loterie est encore disponible, veuillez entrer 2");
-}else if (festivalCount == 2){
-revert("Les deux loteries sont déjà passées");
+uint j = 0;
+if (timeline() <= calendrier[1]){
+j = calendrier[1];
+}else if (timeline() <= calendrier[2]){
+j = calendrier[2];
+}else if (timeline() <= calendrier[3]){
+j = calendrier[3];
 }
 
 //¨Paiement & créditation de la cagnotte
 msg.sender.transfer(msg.value);
-cagnotte =+ msg.value;
+cagnotte += msg.value;
 
-//Enregistrement du joueur
+//Enregistrement du joueur et de son résultat
 Tirage memory nouveauTirage;
 nouveauTirage.joueur = msg.sender;
 nouveauTirage.tiragePerso = numero + 1;
-nouveauTirage.jour = unOuDeux;
-nouveauTirage.victoire = false;
-
-//initialisation du jour de loterie pour le premier tirage & incrémentation du calendrier
+nouveauTirage.jour = j;
 tirages.push(nouveauTirage);
-if (calendrier[1] == 0){
-calendrier[1] = timeline();
-calendrier[2] = timeline() + 5;
-} 
 }
 
-function randomPick() public view returns (int){
+function randomPick() public payable returns (uint){
   //tire un chiffre random les jours de loterie
-  require(timeline() == calendrier[1] || timeline() == calendrier[2], "Ce n'est pas jour de loterie !")
+  require(timeline() == calendrier[1] || timeline() == calendrier[2] || timeline() == calendrier[3], "Ce n'est pas jour de loterie !");
   require(tiragesJournaliers[timeline()] !=0, "Un nombre a déjà été tiré aujourd'hui.");
-  tiragesJournaliers[timeline()] = int(block.blockhash(block.number-1))%255 +1;
+  tiragesJournaliers[timeline()] = uint(blockhash(block.number-1))%255 +1;
 
   //confrontation du résultat avec les gagnants
-  uint i;
-  while (i < nouveauTirage.length - 1){
-    if (tiragesJournaliers[timeline()] == nouveauTirage[i].tiragePerso) && timeline() == nouveauTirage[i].jour {
-      nouveauTirage[i].victoire = true;
+  uint i = 0;
+  
+  while (i < tirages.length - 1){
+    if (tiragesJournaliers[timeline()] == tirages[i].tiragePerso && timeline() == tirages[i].jour) {
+    victoire[tirages[i].joueur] = true;
+    win +=1;
     }
     i +=1;
-
-
-  }
+}
 }
 
-function dDay(){
-  //confronte randomPick avec tirages[], déclare le vainqueur, compte le nieme festival et reverse les gains.
+function redistribution() public payable{
+require(timeline() == calendrier[1] || timeline() == calendrier[2] || timeline() == calendrier[3], "Vous ne pouvez retirer vos prix que les jours de loterie après le tirage.");
+require(victoire[msg.sender]);
+msg.sender.transfer(cagnotte / win);
 }
-
 }
 
 

@@ -14,9 +14,8 @@ function rejoindre() public{
 
 function estMembre(address utilisateur) public view returns (bool){
  for (uint i=0; i<membres.length; i++) {
-  if (msg.sender == membres[i]){
+  if (utilisateur == membres[i]){
      return true;
-  i += 1;
    }
   return false;
  }
