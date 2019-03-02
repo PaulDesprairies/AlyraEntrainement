@@ -1,25 +1,115 @@
 var adresse
 var fournisseur
-
-
 async function createMetaMaskDapp() {
+    const abi = [
+        {
+            "constant": false,
+            "inputs": [
+                {
+                    "name": "dev",
+                    "type": "bytes32"
+      }
+    ],
+            "name": "remettre",
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "uint256"
+      }
+    ],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "function"
+  },
+        {
+            "constant": true,
+            "inputs": [
+                {
+                    "name": "",
+                    "type": "address"
+      }
+    ],
+            "name": "cred",
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "uint256"
+      }
+    ],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function"
+  },
+        {
+            "constant": true,
+            "inputs": [
+                {
+                    "name": "dd",
+                    "type": "string"
+      }
+    ],
+            "name": "produireHash",
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "bytes32"
+      }
+    ],
+            "payable": false,
+            "stateMutability": "pure",
+            "type": "function"
+  },
+        {
+            "constant": false,
+            "inputs": [
+                {
+                    "name": "destinataire",
+                    "type": "address"
+      },
+                {
+                    "name": "valeur",
+                    "type": "uint256"
+      }
+    ],
+            "name": "transfer",
+            "outputs": [],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "function"
+  }
+]
+    const addressContract = "0x451875bdd0e524882550ec1ce52bcc4d0ff90eae"
+
+
     try {
         // Demande à MetaMask l'autorisation de se connecter
-        const addresses = await ethereum.enable();
-        const address = addresses[0]
+        const addresses = await ethereum.enable()
+        const user = addresses[0]
+
         // Connection au noeud fourni par l'objet web3
         const provider = new ethers.providers.Web3Provider(ethereum);
+
+        //instanciation du contrat
+        let contratCredibilite = new ethers.Contract(addressContract, abi, provider);
+
+        //Signature
+        let contratCredibiliteSigne = contratCredibilite.connect(provider.getSigner(user.address));
+
+
+        /// constitution de l'objet dapp
         dapp = {
-            address,
-            provider
+            user,
+            provider,
+            contratCredibilite,
+            contratCredibiliteSigne
         };
-        console.log(dapp)
-        adresse = dapp.address;
-        fournisseur = dapp.provider;
+        console.log("DApp ready: ", dapp)
 
-        document.getElementById("adr").innerHTML = dapp.address.toString();
-        document.getElementById("prov").innerHTML = "bien là";
 
+        //html
+        document.getElementById("adr").innerHTML = dapp.user.toString();
+        document.getElementById("prov").innerHTML = dapp.provider.connection.url;
+        return dapp
 
     } catch (err) {
         // Gestion des erreurs
@@ -29,22 +119,21 @@ async function createMetaMaskDapp() {
 
 
 async function balance() {
-    if (adresse) {
-        fournisseur.getBalance(adresse).then((balance) => {
-            let etherString = ethers.utils.formatEther(balance);
+    if (dapp.user) {
+        dapp.provider.getBalance(dapp.user).then((bal) => {
+            let etherString = ethers.utils.formatEther(bal);
             console.log("Balance :" + etherString);
             document.getElementById("balance").innerHTML = etherString;
         })
     } else {
         alert("Merci de vous connecter avec le metamask d'abord.")
     }
-
 }
 
 
 async function numeroBloc() {
-    if (adresse) {
-        fournisseur.getBlockNumber().then((numeroBloc) => {
+    if (dapp.user) {
+        dapp.provider.getBlockNumber().then((numeroBloc) => {
             console.log("Numéro du bloc :" + numeroBloc)
             document.getElementById("bloc").innerHTML = numeroBloc;
         })
@@ -54,8 +143,8 @@ async function numeroBloc() {
 }
 
 async function prixDuGas() {
-    if (adresse) {
-        fournisseur.getGasPrice().then((prixDuGaz) => {
+    if (dapp.user) {
+        dapp.provider.getGasPrice().then((prixDuGaz) => {
             console.log("Prix du gaz :" + prixDuGaz)
             document.getElementById("gaz").innerHTML = prixDuGaz;
         })
@@ -65,103 +154,27 @@ async function prixDuGas() {
 }
 
 async function remettreDevoir() {
-    if (adresse) {
-        const abi = [
-            {
-                "constant": false,
-                "inputs": [
-                    {
-                        "name": "dev",
-                        "type": "bytes32"
-      }
-    ],
-                "name": "remettre",
-                "outputs": [
-                    {
-                        "name": "",
-                        "type": "uint256"
-      }
-    ],
-                "payable": false,
-                "stateMutability": "nonpayable",
-                "type": "function"
-  },
-            {
-                "constant": true,
-                "inputs": [
-                    {
-                        "name": "",
-                        "type": "address"
-      }
-    ],
-                "name": "cred",
-                "outputs": [
-                    {
-                        "name": "",
-                        "type": "uint256"
-      }
-    ],
-                "payable": false,
-                "stateMutability": "view",
-                "type": "function"
-  },
-            {
-                "constant": true,
-                "inputs": [
-                    {
-                        "name": "dd",
-                        "type": "string"
-      }
-    ],
-                "name": "produireHash",
-                "outputs": [
-                    {
-                        "name": "",
-                        "type": "bytes32"
-      }
-    ],
-                "payable": false,
-                "stateMutability": "pure",
-                "type": "function"
-  },
-            {
-                "constant": false,
-                "inputs": [
-                    {
-                        "name": "destinataire",
-                        "type": "address"
-      },
-                    {
-                        "name": "valeur",
-                        "type": "uint256"
-      }
-    ],
-                "name": "transfer",
-                "outputs": [],
-                "payable": false,
-                "stateMutability": "nonpayable",
-                "type": "function"
-  }
-]
-        addressContract = "0x451875bdd0e524882550ec1ce52bcc4d0ff90eae"
-        let contratCredibilite = new ethers.Contract(addressContract, abi, fournisseur);
+    if (dapp.user) {
 
         //dépôt du devoir
-        var devoir = document.getElementById("devoir").value
-        devoir = await contratCredibilite.produireHash(devoir);
+        var devoir = document.getElementById("devoir").value;
+        devoir = await dapp.contratCredibiliteSigne.produireHash(devoir);
 
-        var rank = await contratCredibilite.remettre(devoir);
-        //calcul de la crédibilité obtenue
-        let maCredibilite = await contratCredibilite.cred(adresse)
-        if (rank < 4) {
-            maCredibilite += 40 - rank * 10;
-        } else {
-            maCredibilite += 10;
-        }
-        return maCredibilite;
+        //récupération des cred
+        let maCredibilite = await dapp.contratCredibiliteSigne.cred(dapp.user);
 
-        document.getElementById("devoirRemis").innerHTML = "Merci !";
-        document.getElementById("cred").innerHTML = maCredibilite;
+        // calcul du rang de remise du devoir et de la crédibilité obtenue
+        dapp.contratCredibiliteSigne.remettre(devoir).then((rank) => {
+            if (rank.value < 4) {
+                maCredibilite += (40 - rank.value * 10);
+            } else {
+                maCredibilite += 10;
+            }
+            ///html
+            document.getElementById("devoirRemis").innerHTML = "Devoir remis, merci !";
+            document.getElementById("rank").innerHTML = rank.value; //0 (?)
+            document.getElementById("cred").innerHTML = maCredibilite;
+        })
 
     } else {
         alert("Merci de vous connecter avec le metamask d'abord.")
