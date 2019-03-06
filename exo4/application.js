@@ -78,7 +78,8 @@ async function createMetaMaskDapp() {
             "type": "function"
   }
 ]
-    const addressContract = "0x451875bdd0e524882550ec1ce52bcc4d0ff90eae"
+    //const addressContract = "0x451875bdd0e524882550ec1ce52bcc4d0ff90eae" //Corrigé
+    const addressContract = "0x07144d85beab1d49d4947d6bd89aed49165f3d44" //Remix incluant les events
 
 
     try {
@@ -175,6 +176,10 @@ async function remettreDevoir() {
             document.getElementById("rank").innerHTML = rank.value; //0 (?)
             document.getElementById("cred").innerHTML = maCredibilite;
         })
+        alert(devoir)
+        dapp.contratCredibiliteSigne.on('Remettre', (eleve, devoir) => {
+            alert("Devoir remis")
+        });
 
     } else {
         alert("Merci de vous connecter avec le metamask d'abord.")
