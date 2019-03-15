@@ -5,22 +5,25 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width-device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>Première DApp</title>
+        <title>Place de marché d'illustrateurs</title>
+        <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
 
     </head>
 
     <body>
-        <h1>Market place</h1>
+        <h1>Marketplace pour illustres illustrateurs</h1><br>
 
         <script src="https://cdn.ethers.io/scripts/ethers-v4.min.js" charset="utf-8" type="text/javascript"></script>
         <script src="defi2.js" charset="utf-8" type="text/javascript"></script>
 
         <button onclick="createMetaMaskDapp()">Se connecter à MetaMask</button><br>
-        L'adresse est : <span type="text" id="adr"></span><br>
-        Le fournisseur est : <span type="text" id="prov"></span><br><br>
+        Adresse de l'utilisateur : <span type="text" id="adr"></span><br>
+        Adresse du contrat : <span type="text" id="prov"></span><br><br>
 
         <button onclick="displayDemands()">Voir toutes les demandes</button><br>
+        <span type="text" id="demande"></span>
 
 
 
