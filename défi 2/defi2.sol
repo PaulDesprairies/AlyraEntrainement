@@ -66,9 +66,9 @@ contract marketPlace{
         
         //vérification de la disponibilité des fonds
         uint expectedAmount = remuneration + (remuneration * 2 / 100);
-        require(msg.value == expectedAmount, "Veuillez attacher à votre transaction votre offre en wei plus 2% de commission.");
+        uint valeur = msg.value;
         require(utilisateurs[indexUtilisateur[msg.sender]].rep>=1, "Vous devez vous inscrire sur la plateforme d'abord.");
-        
+    
         // append de demandes
         Demande memory nouvelleDemande;
         nouvelleDemande.description = description;
@@ -76,8 +76,8 @@ contract marketPlace{
         nouvelleDemande.repMin = reputationMinimum;
         nouvelleDemande.etat = marketPlace.Progess.OUVERTE;
         nouvelleDemande.remuneration = remuneration;
-        nouvelleDemande.illustrator = address(0);
-        nouvelleDemande.hashUrl = 0;
+        //nouvelleDemande.illustrator = address(0);
+        //nouvelleDemande.hashUrl = 0;
         nouvelleDemande.emetteur = msg.sender;
         //nouvelleDemande.candidats = rien
         demandes.push(nouvelleDemande);
@@ -99,10 +99,11 @@ contract marketPlace{
     function livraisonIllustration(uint indDemande, bytes32 travaux) public payable{
         require(demandes[indDemande].illustrator == msg.sender, "Seul un illustrateur choisi par une entreprise peut remettre ses travaux");
         require(travaux != 0, "Vous devez remettre le hash de votre lien URL");
+        require(demandes[indDemande].etat == marketPlace.Progess.ENCOURS, "Seul les projets en cours peuvent être assignés en retard");
         demandes[indDemande].hashUrl = travaux;
         demandes[indDemande].etat = marketPlace.Progess.FERMEE;
         demandes[indDemande].deliveryDate = block.timestamp;
-        utilisateurs[indexUtilisateur[msg.sender]].rep += 1;
+        utilisateurs[indexUtilisateur[msg.sender]].rep += 1;    
         //msg.sender.transfer(demandes[indDemande].remuneration);
     }
 
@@ -117,7 +118,7 @@ contract marketPlace{
     function retard(uint indDemande) public{
         require(indexDemande[msg.sender] == indDemande, "Seul le demandeur peut déclarer un retard de prestation");
         require(demandes[indDemande].etat == marketPlace.Progess.ENCOURS, "Seul les projets en cours peuvent être assignés en retard");
-        uint delai = demandes[indDemande].acceptationDate + demandes[indDemande].deliveryTime;
+        uint delai = demandes[indDemande].acceptationDate + (demandes[indDemande].deliveryTime * 24 * 60 * 60);
         require(delai > block.timestamp, "Le projet ne peut être pénalisé pour retard tant qu'il est dans les temps");
         require(utilisateurs[indexUtilisateur[demandes[indDemande].illustrator]].rep > 1, "La réputation est déjà au minimum");
         utilisateurs[indexUtilisateur[demandes[indDemande].illustrator]].rep -= 1;
