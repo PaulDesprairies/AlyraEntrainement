@@ -8,11 +8,16 @@ contract marketPlace{
         uint rep;
         string nom;
         string[] commentaires;
+        address addresse;
         Satisfaction[] satisfaction;
+        bool admin;
     }
     Utilisateur[] public utilisateurs;
     mapping (address => uint) indexUtilisateur;
     uint public nbUtilisateur;
+
+    mapping(address => bool) adressesBannies;
+
     //
     enum Progess {OUVERTE,ENCOURS,FERMEE}
     struct Demande {
@@ -32,9 +37,26 @@ contract marketPlace{
     Demande[] public demandes;
     mapping (address => uint) public indexDemande;
     uint public nbDemande;    
+
+
+
+    constructor(string memory nom) public {
+        Utilisateur memory nouveau;
+        nouveau.rep = 1;
+        nouveau.nom = nom;
+        nouveau.addresse = msg.sender;
+        nouveau.admin = true;
+        utilisateurs.push(nouveau);
+        indexUtilisateur[msg.sender] = nbUtilisateur;
+        nbUtilisateur ++;
+    }
     
     ////////////////////Functions/////////////////////
     
+    function getNbUtilisateur() public view returns (Utilisateur[] memory){
+        return utilisateurs;
+    }
+
     function getNbDemande() public view returns (Demande[] memory){
         return demandes;
     }
@@ -46,9 +68,11 @@ contract marketPlace{
     
     
     function inscription(string memory nom) public{
+        require(adressesBannies[msg.sender] == false, "Vous n'avez plus le droit de vous inscrire sur la plateforme");
         Utilisateur memory nouveau;
         nouveau.rep = 1;
         nouveau.nom = nom;
+        nouveau.addresse = msg.sender;
         utilisateurs.push(nouveau);
         indexUtilisateur[msg.sender] = nbUtilisateur;
         nbUtilisateur ++;
@@ -65,8 +89,6 @@ contract marketPlace{
     function enregistrerDemande(string memory description, uint timing, uint reputationMinimum, uint remuneration) public payable{
         
         //vérification de la disponibilité des fonds
-        uint expectedAmount = remuneration + (remuneration * 2 / 100);
-        uint valeur = msg.value;
         require(utilisateurs[indexUtilisateur[msg.sender]].rep>=1, "Vous devez vous inscrire sur la plateforme d'abord.");
     
         // append de demandes
@@ -182,5 +204,16 @@ contract marketPlace{
         }else{
             utilisateurs[indexUtilisateur[demandes[indDemande].illustrator]].rep = 1;  
         }
+    }
+
+    function expulser(uint indUtilisateur) public{
+        require(utilisateurs[indexUtilisateur[msg.sender]].admin = true, "Seul l'admin peut expulser un utilisateur");
+        utilisateurs[indUtilisateur].rep = 0;
+        adressesBannies[utilisateurs[indUtilisateur].addresse] = true;
+    }
+
+    function promouvoir(uint indUtilisateur) public{
+        require(utilisateurs[indexUtilisateur[msg.sender]].admin = true, "Seul l'admin peut promouvoir un utilisateur");
+        utilisateurs[indUtilisateur].admin = true;
     }
 }
