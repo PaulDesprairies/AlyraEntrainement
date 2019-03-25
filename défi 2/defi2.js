@@ -553,8 +553,8 @@ async function displayDemands() {
                 //i ++; 
             }
             cand.innerHTML += `<td>
-            <div style="display:inline-block"><button onclick="postuler(${index})" class="btn btn-info">Concourir</div>
-            <div style="display:inline-block"><button onclick="accepter(${index} )" class="btn btn-info">Choisir un candidat</div>
+            <div style="display:inline-block"><button onclick="postuler(${index})" class="btn btn-info">Concourir</div><br>
+            <br><div style="display:inline-block"><button onclick="accepter(${index} )" class="btn btn-info">Choisir un candidat</div>
             </td>` ;
 
 
