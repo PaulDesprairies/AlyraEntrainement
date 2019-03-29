@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Crypto App</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Dosis:400,700" rel="stylesheet" />
+  </head>
+
+  <body>
+    <h1>Yahou</h1>
+
+    <script>
+    fetch('https://api.bitfinex.com/v1/pubticker/btceur'+symbol+'XBT')
+  .then(function(response) {
+    return response.json()
+  })
+  .then(function(myJson) {
+    alert("hello")
+  })
+  </script>
+
+  </body>
+</html>
