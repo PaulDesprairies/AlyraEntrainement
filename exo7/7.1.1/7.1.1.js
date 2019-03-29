@@ -26,6 +26,7 @@ request.onload = function() {
       container.appendChild(card)
       card.appendChild(h1)
       card.appendChild(p)
+      alert("test")
     })
   } else {
     const errorMessage = document.createElement('marquee')

@@ -13,13 +13,15 @@
     <h1>Yahou</h1>
 
     <script>
-    fetch('https://api.bitfinex.com/v1/pubticker/btceur'+symbol+'XBT')
-  .then(function(response) {
-    return response.json()
-  })
-  .then(function(myJson) {
-    alert("hello")
-  })
+    let url = 'https://api.bitfinex.com/v1/pubticker/btceur' ;
+    fetch(url)
+  .then(function(data) {
+    alert("1")
+})
+
+  .catch(function(error) {
+    alert("2")
+  });  
   </script>
 
   </body>
