@@ -6,9 +6,9 @@ contract JeuDesCivilisations {
 
 
     enum Identity {SAGE, AGRESSIF, RECLU, IMPREVISIBLE} //AGE 1 - Identité
-    enum Element_1 {SOL, CIEL, FEU, EAU} //AGE 2 - Element niveau 1
+    enum Element_1 {SOL, ETHER, FEU, EAU} //AGE 2 - Element niveau 1
     enum Divinity_1 {SCANDINAVE, GREC, HINDU, EGYPTIENS} //AGE 3 - Divinité niveau 1/2
-    enum Element_2 {TERRE, LUMIERE, FOUDRE, GLACE} //AGE 4 - Element niveau 2
+    enum Element_2 {TERRE, CIEL, FOUDRE, GLACE} //AGE 4 - Element niveau 2
     enum Technology_1 {ATOME, PHOTON, OBSCURITE, PHILOSOPHIE} //AGE 5 - Technologie niveau 1
     enum Technology_2 {ELECTRON, LUMIERE, ANTIPARTICULE, UNIVERSALITE} //AGE 6 - Technologie niveau 2
     enum Element_3 {KERNEL, SOLAIRE, PLASMA, CRISTAL} //AGE 7 - Element niveau 3
@@ -121,7 +121,7 @@ contract JeuDesCivilisations {
         civilisations[_civilisationIndex[civilisationID]].owner = to;
     }
 
-    //*******************Combats********************//
+    //*******************Vie et mort des civilisations********************//
 
 
     //Pour gagner un age supplémentaire -- permet de faire évoluer sa civilisation
