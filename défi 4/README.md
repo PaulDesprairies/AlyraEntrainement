@@ -20,6 +20,11 @@ Description d'une civilisation
     <tr>
         <th>up</th>
         <td>middle</td>
-	    <td>down</td>
+	 <td>down</td>
+    </tr>
+	<tr>
+        <th>up</th>
+        <td>middle</td>
+	<td>down</td>
     </tr>
 </table>
