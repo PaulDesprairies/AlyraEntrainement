@@ -11,7 +11,7 @@ Obtenir le plus de point de gloire pour créer des merveilles dans sa civilisati
 
 Commencement
 ------------
-Un joueur fonde sa civilisation originelle. Cela lui coûte 0.1 ethers. Cette civilisation est unique (ERC721) et estcaractérisée par plusieurs items dont son identitée (choisie au hasard). Toute civilisation commence à l'age 1 par une identité aléatoire.
+Un joueur fonde sa civilisation originelle. Cela lui coûte 0.1 ethers. Cette civilisation est unique (ERC721) et est caractérisée par plusieurs items dont son identité (choisie au hasard). Toute civilisation commence à l'age 1 par une identité aléatoire.
 
 
 
@@ -112,25 +112,25 @@ Conduite d'une civilisation
 ------------------------------
 Plusieurs actions sont possibles d'entreprendre avec vos civilisations. Chaque joueur joue chacun son tour.
 
-1.  La guerre
-* La conquête
-Vous gagnez une bataille contre un autre royaume. Vous gagnez le droit d'évoluer d'un âge.
+1.  ##La guerre
+* #La conquête
+>Vous gagnez une bataille contre un autre royaume. Vous gagnez le droit d'évoluer d'un âge.
 
-* Le pillage
-Vous vous introduisez chez l'adversaire et vous lui pillez une compétence.
+* #Le pillage
+>Vous vous introduisez chez l'adversaire et vous lui pillez une compétence.
 
-* La capture
-Vous faites abdiquer le roi adverse et récupérez sa couronne et sa civilisation.
+* #La capture
+>Vous faites abdiquer le roi adverse et récupérez sa couronne et sa civilisation.
 
-2.  La paix
-* L'achat
-Vous pouvez acheter le droit de copier une compétence chez une autre civilisation.
+2.  ##La paix
+* #L'achat
+>Vous pouvez acheter le droit de copier une compétence chez une autre civilisation.
 
-* L'harmonie
-Vous pouvez vous concentrer sur une compétence précise que vous possédez et la faire évoluer vers un autre âge.
+* #L'harmonie
+>Vous pouvez vous concentrer sur une compétence précise que vous possédez et la faire évoluer vers un autre âge.
 
-* Muraille
-Vous pouvez faire échouer une action de guerre entreprise contre vous.
+* #Muraille
+>Vous pouvez faire échouer une action de guerre entreprise contre vous.
 
 
 Finale
