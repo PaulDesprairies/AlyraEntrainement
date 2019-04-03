@@ -1,13 +1,15 @@
 pragma solidity ^0.5.6;
+
+
 contract ERC721simple {
 
-mapping (uint => address) private _tokenOwner;
+    mapping (uint => address) private _tokenOwner;
 
     function generateRandom() private view returns (uint) {
-    uint256 genPrefixe = uint256(blockhash(block.number-1));
-    uint256 genSuffixe = uint(genPrefixe % 1000);
-    genPrefixe = uint(genPrefixe % 3) * 1000;
-    return genPrefixe = genPrefixe + genSuffixe;
+        uint256 genPrefixe = uint256(blockhash(block.number-1));
+        uint256 genSuffixe = uint(genPrefixe % 1000);
+        genPrefixe = uint(genPrefixe % 3) * 1000;
+        return genPrefixe = genPrefixe + genSuffixe;
     }
 
     function creuser() public payable returns (address){
@@ -50,4 +52,6 @@ mapping (uint => address) private _tokenOwner;
         }
         return true;
     }
+
+
 }
