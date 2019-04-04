@@ -110,32 +110,30 @@ Technologie
 
 Conduite d'une civilisation
 ------------------------------
-Plusieurs actions sont possibles d'entreprendre avec vos civilisations. Chaque joueur joue chacun son tour.
+Plusieurs actions sont possibles d'entreprendre avec vos civilisations. Chaque joueur à la droit de jouer tous les 500 blocs (environ toutes les 2h). On obtient un âge de niveau n quand sont acquis les compétences éléments, technologie et divin de niveau n. 
 
-1.  ##La guerre
-* #La conquête
->Vous gagnez une bataille contre un autre royaume. Vous gagnez le droit d'évoluer d'un âge.
+1.  La guerre
+* La conquête (age 2)
+>Vous gagnez une bataille contre un autre royaume et vous obtenez une compétence, voire de l'argent si vous faites un 6. En revanche, vous perdez des sesterces en cas de défaite.
 
-* #Le pillage
->Vous vous introduisez chez l'adversaire et vous lui pillez une compétence.
-
-* #La capture
+* La capture (age 3)
 >Vous faites abdiquer le roi adverse et récupérez sa couronne et sa civilisation.
 
-2.  ##La paix
-* #L'achat
->Vous pouvez acheter le droit de copier une compétence chez une autre civilisation.
+2.  La paix
+* L'apprentissage (age 1)
+>Vous bâtissez une école, une université ou un centre de recherche et obtenez une nouvelle compétence.
 
-* #L'harmonie
->Vous pouvez vous concentrer sur une compétence précise que vous possédez et la faire évoluer vers un autre âge.
+* L'harmonie (age 1)
+>Vous consacrer votre tour au bien être de votre peuple, ce qui vous rapporte des sesterces..
 
-* #Muraille
->Vous pouvez faire échouer une action de guerre entreprise contre vous.
+* Remparts (age 1)
+>Vous faite échouer la prochaine action de guerre entreprise contre vous.
 
+* Soumission (age 3)
+>Vous pouvez prélever des taxes dans vos civilisations dominées. Attention, si vous exploitez trop vos civilisations, celles-ci ne pourront plus se défendre et seront à la merci de l'ennemie, affectant votre gloire.
 
-Finale
+Les merveilles
 ------
+Tous les 50 000 blocs, les points de gloire sont calculés pour chaque civilisation selon un algorithme interne qui prend en compte le nombre d'ages atteints, la complétion d'une famille (technologie, élément, divination). A ce résultat sont ajoutés les points de gloire de toute autre civilisation possédée et du nombre de sesterces du joueur en fin de partie.
 
-Tous les 50 000 blocs, es points de gloire sont calculés pour chaque civilisation selon un algorithme interne qui prend en compte le nombre d'ages atteints, la complétion d'une famille (technologie, élément, divination). A ce résultat sont ajoutés les points de gloire de toute autre civilisation possédée et du nombre de sesterces du joueur en fin de partie.
-
-Le gagnant reçoit alors le droit de créer une merveille du monde dans sa civilisation originelle moyennant 50 000 sesterces.
+Le gagnant reçoit alors le droit de créer une merveille dans sa civilisation originelle moyennant 50 000 sesterces.
