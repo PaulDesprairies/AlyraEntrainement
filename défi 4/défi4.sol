@@ -140,6 +140,10 @@ constructor() internal{
         return civilisations[_civilisationIndex[civilisationID]].sesterces >= sesterces;
     }
 
+    function civilisationOriginelle(address roi) internal view returns (bytes32){
+        return players[_playerIndex[roi]].originCivilisation;
+    }
+
     //Paiement d'une rançon proportionnelle à l'age de la civilisation
     function paiementRancon(bytes32 civilisationID1, bytes32 civilisationID2, uint sesterces) internal{
         require(civilisationExiste(civilisationID1), "Cette civilisation1 n'existe pas");
@@ -318,18 +322,24 @@ constructor() internal{
     }
 
     //fonction à invoquer tous les 50 000 blocs (toutes les semaines) pour désigner le joueur gagnant : celui qui a le plus de gloire
-    function couronnementDeLEmpereur() public view returns (address){
+    function couronnementDeLEmpereur() public returns (address){
         
         require(gameStone + 50000 < block.number,"Il n'est pas encore temps d'invoquer le nouvel empereur");
         uint glory = 0;
         address empereur;
         for (uint i = 1; i <= players.length; i++){
-            uint temp = gloireDuRoi(players[i].identity);
-            if(temp>glory){
-                glory = temp;
-                empereur = players[i].identity;
+            if(civilisationRichesse(civilisationOriginelle(players[i].identity), 50000)){
+                uint temp = gloireDuRoi(players[i].identity);
+                if(temp>glory){
+                    glory = temp;
+                    empereur = players[i].identity;
+                }
             }
         }
+
+        //Un nouveau roi est couronné empereur. Il peut prétendre à construire une merveille contre 50000 sesterces.
+        civilisations[_civilisationIndex[civilisationOriginelle(empereur)]].sesterces -= 50000;
+        attributionMerveille(empereur);
 
         return empereur;
         }
