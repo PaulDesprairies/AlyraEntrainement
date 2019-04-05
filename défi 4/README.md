@@ -117,7 +117,7 @@ Plusieurs actions sont possibles d'entreprendre avec vos civilisations. Chaque j
 >Vous gagnez une bataille contre un autre royaume et vous obtenez une compétence, voire de l'argent si vous faites un 6. En revanche, vous perdez des sesterces en cas de défaite.
 
 * La capture (age 3)
->Vous faites abdiquer le roi adverse et récupérez sa couronne et sa civilisation.
+>Vous faites abdiquer le roi adverse et récupérez sa couronne et sa civilisation. Un roi ne peut gérer plus de 7 civilisations.
 
 2.  La paix
 * L'apprentissage (age 1)
@@ -131,6 +131,11 @@ Plusieurs actions sont possibles d'entreprendre avec vos civilisations. Chaque j
 
 * Soumission (age 3)
 >Vous pouvez prélever des taxes dans vos civilisations dominées. Attention, si vous exploitez trop vos civilisations, celles-ci ne pourront plus se défendre et seront à la merci de l'ennemie, affectant votre gloire.
+
+L'exil
+------
+Quand un souverain est dépossédé de toutes ses civilisations, il est contraint à l'exil et part se perdre dans les montagnes du Genesis, d'où il pourra faire son retour un jour.
+
 
 Les merveilles
 ------

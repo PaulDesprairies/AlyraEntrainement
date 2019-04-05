@@ -5,7 +5,7 @@ pragma experimental ABIEncoderV2;
 contract JeuDesCivilisations {
 uint gameStone;
 
-constructor() internal{
+constructor() public {
     gameStone = block.number;
 }
     enum Identity {SAGE, AGRESSIF, RECLU, IMPREVISIBLE} //Genesis - Identité
@@ -37,7 +37,7 @@ constructor() internal{
         string name;
         address identity;
         bytes32 originCivilisation;
-        bytes32[] ownedCivilisations;
+        bytes32[7] ownedCivilisations;
         uint last_action;
     }
 
@@ -49,18 +49,22 @@ constructor() internal{
 
 ///Génère un chiffre random de 1 à param
     function generateRandom(uint8 param) private view returns (uint) {
-        uint256 genId = uint256(blockhash(block.number-1));
-        genId = uint(genId % param) + 1 ;
-        return genId;
+        
+        return(uint(blockhash(block.number-1))%param) + 1;
+
     }
 
 ///**************Initialisation*************//
+    function bytesToAdress(bytes32 data) internal pure returns (address) {
+        return address(uint160(uint256(data)));
+    }
+
     function fonderCivilisation(string memory _namePlayer, string memory _nameCivilisation, uint8 divinity_type, uint8 element_type, uint8 technology_type) public payable returns (bytes32){
 
         require(divinity_type<5 && element_type < 5 && technology_type <5, "Veuillez choisir les directions de votre civilisation");
         require(msg.value == 0.1 ether, "Une fondation coûte 0.1 ether");
         bytes32 signature = blockhash(block.number-1);
-        require(voiciMonRoi(signature) == address(0), "Cette civilisation a déjà été fondée");
+        require(_civilisationIndex[signature] == 0, "Cette civilisation a déjà été fondée");
 
         Player memory nouveauJoueur;
         Civilisation memory nouvelleCivilisation;
@@ -70,6 +74,7 @@ constructor() internal{
         nouveauJoueur.identity = msg.sender;
         nouveauJoueur.originCivilisation = signature;
         nouveauJoueur.ownedCivilisations[0] = signature;
+        nouveauJoueur.last_action = block.number;
         _playerIndex[msg.sender] = nbJoueurs;
         nbJoueurs++;
 
@@ -89,14 +94,12 @@ constructor() internal{
         players.push(nouveauJoueur);
         civilisations.push(nouvelleCivilisation);
 
-        blockStamp();
-
         return signature;
     }
     
     //*************Informations**************//
-    function voiciMonRoyaume(address roi) public view returns (bytes32[] memory){
-        bytes32[] memory royaume = players[_playerIndex[roi]].ownedCivilisations;
+    function voiciMonRoyaume(address roi) public view returns (bytes32[7] memory){
+        bytes32[7] memory royaume = players[_playerIndex[roi]].ownedCivilisations;
         require(royaume.length != 0, "Vous êtes un imposteur");
         return royaume;
     }
@@ -120,8 +123,8 @@ constructor() internal{
         require(vainqueur != address(0));
 
         address roiDechu = voiciMonRoi(civilisationID);
-
-        players[_playerIndex[vainqueur]].ownedCivilisations.push(civilisationID);
+        uint etendueRoyaume = players[_playerIndex[vainqueur]].ownedCivilisations.length;
+        players[_playerIndex[vainqueur]].ownedCivilisations[etendueRoyaume] = civilisationID;
 
         for (uint i = 0; i < voiciMonRoyaume(roiDechu).length; i++){
             if(voiciMonRoyaume(roiDechu)[i] == civilisationID){
@@ -309,7 +312,7 @@ constructor() internal{
     }
 
     function gloireDuRoi(address roi) internal view returns (uint){
-        bytes32[] memory royaume = voiciMonRoyaume(roi);
+        bytes32[7] memory royaume = voiciMonRoyaume(roi);
         uint gloire = 1;
             for (uint8 i = 0; i < royaume.length; i++){
                 gloire = gloire * gloireDuRoyaume(royaume[i]);
