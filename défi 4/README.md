@@ -114,10 +114,10 @@ Plusieurs actions sont possibles d'entreprendre avec vos civilisations. Chaque j
 
 1.  La guerre
 * La conquête (age 2)
->Vous gagnez une bataille contre un autre royaume et vous obtenez une compétence, voire de l'argent si vous faites un 6. En revanche, vous perdez des sesterces en cas de défaite.
+>Vous gagnez une bataille contre un autre royaume si, lorsque vous tirez au dé, vous faites plus de 4. Vous obtenez une compétence, voire de l'argent si vous faites un 6. Vous perdez de l'argent si vous perdez.
 
 * La capture (age 3)
->Vous faites abdiquer le roi adverse et récupérez sa couronne et sa civilisation. Un roi ne peut gérer plus de 7 civilisations.
+>Vous faites abdiquer le roi adverse et récupérez sa couronne et sa civilisation si vous faites 6 aux dés. Vous perdez de l'argent si vous perdez. Un roi ne peut gérer plus de 7 civilisations.
 
 2.  La paix
 * L'apprentissage (age 1)
@@ -131,6 +131,9 @@ Plusieurs actions sont possibles d'entreprendre avec vos civilisations. Chaque j
 
 * Soumission (age 3)
 >Vous pouvez prélever des taxes dans vos civilisations dominées. Attention, si vous exploitez trop vos civilisations, celles-ci ne pourront plus se défendre et seront à la merci de l'ennemie, affectant votre gloire.
+
+* Richesses infinies (age 3)
+>Vous consacrez votre tour à tirer un dé gigantesque à 1001 faces. Si vous tombez sur 1001, vous n'aurez plus jamais besoin d'argent. Mais attention, l'univers risque fort de se liguer contre vous.
 
 L'exil
 ------

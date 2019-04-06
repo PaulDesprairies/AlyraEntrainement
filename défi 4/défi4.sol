@@ -3,11 +3,7 @@ pragma experimental ABIEncoderV2;
 
 
 contract JeuDesCivilisations {
-uint gameStone;
 
-constructor() public {
-    gameStone = block.number;
-}
     enum Identity {SAGE, AGRESSIF, RECLU, IMPREVISIBLE} //Genesis - Identité
 
     struct Civilisation {
@@ -45,20 +41,30 @@ constructor() public {
     mapping(address => uint) _playerIndex;
     uint nbJoueurs = 1;
 
+////****Initialisation********////
+constructor() public {
+        Player memory nouveauJoueur;
+        Civilisation memory nouvelleCivilisation;
+    
+           //Nouveau joueur
+        nouveauJoueur.name = "Constructeur";
+        nouveauJoueur.identity = address(this);
+        nouveauJoueur.last_action = block.number;
+
+        //Nouvelle civilisation
+        nouvelleCivilisation.signature = 0;
+        nouvelleCivilisation.name = "Genesis";
+        nouvelleCivilisation.roi = address(this);
+        nouvelleCivilisation.founder = address(this);
+ 
+
+        players.push(nouveauJoueur);
+        civilisations.push(nouvelleCivilisation);
+}
 
 
-///Génère un chiffre random de 1 à param
-    function generateRandom(uint8 param) private view returns (uint) {
-        
-        return(uint(blockhash(block.number-1))%param) + 1;
 
-    }
-
-///**************Initialisation*************//
-    function bytesToAdress(bytes32 data) internal pure returns (address) {
-        return address(uint160(uint256(data)));
-    }
-
+///**************Fondation*************//
     function fonderCivilisation(string memory _namePlayer, string memory _nameCivilisation, uint8 divinity_type, uint8 element_type, uint8 technology_type) public payable returns (bytes32){
 
         require(divinity_type<5 && element_type < 5 && technology_type <5, "Veuillez choisir les directions de votre civilisation");
@@ -96,8 +102,17 @@ constructor() public {
 
         return signature;
     }
+
+
+
     
     //*************Informations**************//
+    
+    ///Génère un chiffre random de 1 à param
+    function generateRandom(uint param) private view returns (uint) {
+        return(uint(blockhash(block.number-1))%param) + 1;
+    }
+
     function voiciMonRoyaume(address roi) public view returns (bytes32[7] memory){
         bytes32[7] memory royaume = players[_playerIndex[roi]].ownedCivilisations;
         require(royaume.length != 0, "Vous êtes un imposteur");
@@ -171,11 +186,11 @@ constructor() public {
 
     //MAJ de l'âge de la civilisation
     function checkAge(bytes32 civilisationID) internal{
+        if (civilisations[_civilisationIndex[civilisationID]].divinity_level > 0 && civilisations[_civilisationIndex[civilisationID]].technology_level > 0 && civilisations[_civilisationIndex[civilisationID]].element_level > 0){
+           civilisations[_civilisationIndex[civilisationID]].age = 2; 
+        }
         if (civilisations[_civilisationIndex[civilisationID]].divinity_level > 1 && civilisations[_civilisationIndex[civilisationID]].technology_level > 1 && civilisations[_civilisationIndex[civilisationID]].element_level > 1){
            civilisations[_civilisationIndex[civilisationID]].age = 1; 
-        }
-        if (civilisations[_civilisationIndex[civilisationID]].divinity_level > 2 && civilisations[_civilisationIndex[civilisationID]].technology_level > 2 && civilisations[_civilisationIndex[civilisationID]].element_level > 2){
-           civilisations[_civilisationIndex[civilisationID]].age = 2; 
         }
         if (civilisations[_civilisationIndex[civilisationID]].divinity_level == 3 && civilisations[_civilisationIndex[civilisationID]].technology_level == 3 && civilisations[_civilisationIndex[civilisationID]].element_level == 3){
            civilisations[_civilisationIndex[civilisationID]].age = 3; 
@@ -187,7 +202,10 @@ constructor() public {
     }
 
     function aToiDeJouer() internal view returns (bool){
-        return players[_playerIndex[msg.sender]].last_action + 500 < block.number;
+        //Mode prod
+        //return players[_playerIndex[msg.sender]].last_action + 500 < block.number;
+        //Mode debug
+        return players[_playerIndex[msg.sender]].last_action + 1 < block.number;
     }
 
     function attributionMerveille(address empereur) internal{
@@ -206,6 +224,7 @@ constructor() public {
     function nouvelleCompetence(bytes32 civilisationID, uint un_Divin_deux_Techno_trois_Elem) public{
         require(aToiDeJouer(), "Vous ne pouvez jouer que tous les 500 blocs");
         require(voiciMonRoi(civilisationID) == msg.sender, "Vous n'être pas le roi de cette civilisation");
+        require(civilisations[_civilisationIndex[civilisationID]].age < 2, "Vous ne pouvez utiliser cette compétence qu'aux ages 0 et 1");
         require(civilisationRichesse(civilisationID, 5000), "Vous devez avoir au moins 5000 sesterces pour mener cette attaque");
         require(un_Divin_deux_Techno_trois_Elem < 4, "Merci de renseigner la catégorie que vous souhaitez voir évoluer");
         monteeEnCompetence(civilisationID, un_Divin_deux_Techno_trois_Elem);
@@ -218,15 +237,15 @@ constructor() public {
     function harmonie(bytes32 civilisationID) public{
         require(aToiDeJouer(), "Vous ne pouvez jouer que tous les 500 blocs");
         require(voiciMonRoi(civilisationID) == msg.sender, "Vous n'être pas le roi de cette civilisation");
-        require(civilisationExiste(civilisationID), "Vous devez fonder une civilisation d'abord");
-        civilisations[_civilisationIndex[civilisationID]].sesterces += 5000 * civilisations[_civilisationIndex[civilisationID]].age;
+        civilisations[_civilisationIndex[civilisationID]].sesterces += 5000 * (civilisations[_civilisationIndex[civilisationID]].age +1);
         blockStamp();
     }
 
     function rempart(bytes32 civilisationID) public{
         require(aToiDeJouer(), "Vous ne pouvez jouer que tous les 500 blocs");
         require(voiciMonRoi(civilisationID) == msg.sender, "Vous n'être pas le roi de cette civilisation");
-        require(civilisationExiste(civilisationID), "Vous devez fonder une civilisation d'abord");
+        require(civilisations[_civilisationIndex[civilisationID]].sesterces >= 8000, "Vous avez déjà érigé un rempart");
+        require(civilisations[_civilisationIndex[civilisationID]].remparts ==false, "Vous avez déjà érigé un rempart");
         civilisations[_civilisationIndex[civilisationID]].sesterces -= 8000 ;
         civilisations[_civilisationIndex[civilisationID]].remparts = true;
         blockStamp();
@@ -302,6 +321,19 @@ constructor() public {
                 blockStamp();
     }
 
+//Confère une richesse infine à une civilisation donnée
+           function richesseInfine(bytes32 civilisationID) public{
+        require(aToiDeJouer(), "Vous ne pouvez jouer que tous les 500 blocs");
+        require(voiciMonRoi(civilisationID) == msg.sender, "Vous n'être pas le roi de cette civilisation");
+        require(civilisations[_civilisationIndex[civilisationID]].age == 3, "Il vous faut être du troisième age pour pouvoir utiliser cette attaque");
+        
+        uint de = generateRandom(1001); 
+        if (de == 1001){
+        civilisations[_civilisationIndex[civilisationID]].sesterces -= (civilisations[_civilisationIndex[civilisationID]].sesterces +1);
+        }
+                blockStamp();
+    }
+
 
 
     //*************Désignation du vainqueur**************//
@@ -327,7 +359,7 @@ constructor() public {
     //fonction à invoquer tous les 50 000 blocs (toutes les semaines) pour désigner le joueur gagnant : celui qui a le plus de gloire
     function couronnementDeLEmpereur() public returns (address){
         
-        require(gameStone + 50000 < block.number,"Il n'est pas encore temps d'invoquer le nouvel empereur");
+        require(players[0].last_action + 50000 < block.number,"Il n'est pas encore temps d'invoquer le nouvel empereur");
         uint glory = 0;
         address empereur;
         for (uint i = 1; i <= players.length; i++){
@@ -343,6 +375,8 @@ constructor() public {
         //Un nouveau roi est couronné empereur. Il peut prétendre à construire une merveille contre 50000 sesterces.
         civilisations[_civilisationIndex[civilisationOriginelle(empereur)]].sesterces -= 50000;
         attributionMerveille(empereur);
+
+        players[0].last_action += 50000;
 
         return empereur;
         }
