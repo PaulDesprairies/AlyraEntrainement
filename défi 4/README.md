@@ -11,13 +11,12 @@ Obtenir le plus de point de gloire pour créer des merveilles dans sa civilisati
 
 Commencement
 ------------
-Un joueur fonde sa civilisation originelle. Cela lui coûte 0.1 ethers. Cette civilisation est unique (ERC721) et est caractérisée par plusieurs items dont son identité (choisie au hasard). Toute civilisation commence à l'age 1 par une identité aléatoire.
+Un joueur fonde sa civilisation originelle. Cela lui coûte 0.1 ethers. Cette civilisation est unique (ERC721) et est caractérisée par plusieurs items dont son identité (choisie au hasard). Toute civilisation commence au genesis (l'age 0) par une identité aléatoire et avec 1000 sesterces.
 
 
 
 Description d'une civilisation
 ------------------------------
-
 Le Joueur va ensuite devoir conduire sa civilisation au fil des âges en choisissant certaines divinations, éléments & technologie et en faisant évoluer son royaume dans ces directions d'âge en âge.
 
 
