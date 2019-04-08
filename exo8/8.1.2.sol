@@ -12,27 +12,27 @@ contract CanalDePaiement{
     uint equilibreA;
     uint equilibreB;
 
-    constructor(uint _montant, address _partieA, address _partieB) internal{
+    constructor(uint _montant, address _partieA, address _partieB) public{
         montant = _montant;
         partieA = _partieA;
         partieB = _partieB;
         etat = EtatCanal.VIDE;
     }
     
-    function financer() payable public{
+    function financer() payable public returns (EtatCanal){
         require(msg.value == montant, "Montant incorrect");
-        bool A;
-        bool B;
-        if(msg.sender == partieA){
-            A = true;
+        if(msg.sender == partieA ){
+            require(equilibreA == 0,"Montant déjà versé");
             equilibreA += montant;
         }
-        if(msg.sender == partieB){
-            B = true;
+        if(msg.sender == partieB ){
+            require(equilibreB == 0,"Montant déjà versé");
             equilibreB += montant;
         }
-        if(A == true && B == true){
+        if(equilibreA == montant && equilibreB == montant){
             etat = EtatCanal.ACTIF;
         }
+        
+        return etat;
     }
 }
