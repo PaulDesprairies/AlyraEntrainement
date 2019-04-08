@@ -1,4 +1,5 @@
 pragma solidity ^0.5.6;
+//import "http://github.com/OpenZeppelin/openzeppelin-solidity/contracts/cryptography/ECDSA.sol";
 
 
 contract CanalDePaiement{
@@ -11,6 +12,9 @@ contract CanalDePaiement{
     uint dernierNonce;
     uint equilibreA;
     uint equilibreB;
+
+    mapping(uint => bytes32) indexPreuve;
+    uint preuve;
 
     constructor(uint _montant, address payable _partieA, address payable _partieB) public{
         montant = _montant;
@@ -42,5 +46,16 @@ contract CanalDePaiement{
     }
 
 
+    function fermeture(uint _nonce, uint _equilibreA, uint _equilibreB, bytes memory _signature) public returns (uint){
+        require(msg.sender == partieA || msg.sender == partieB, "Vous n'avez pas le droit de fermer ce canal");
+        blocFermeture = block.number;
+        etat = EtatCanal.ENCOURSFERMETURE;
+    }
 
+    function solde(uint _nonce, uint _equilibreA, uint _equilibreB, bytes memory _signature) payable public{
+
+        partieA.transfer(equilibreA);
+        partieB.transfer(equilibreB);
+
+    }
 }
