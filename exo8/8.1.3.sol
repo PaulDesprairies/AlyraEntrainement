@@ -40,8 +40,7 @@ contract CanalDePaiement{
     }
     
 
-    function transmissionMessage(uint virement) public returns (uint[3] memory){
-        uint[3] memory newData;
+    function message(uint virement) public returns (bytes32){
 
         if (msg.sender == partieA){
             require(equilibreA >= virement, "Vous n'avez pas les fonds suffisants");
@@ -56,12 +55,7 @@ contract CanalDePaiement{
             equilibreB -= virement;
             dernierNonce += 1;
         }
-
-        return newData = [dernierNonce, equilibreA, equilibreB];
-    }
-
-    function message(uint[3] memory toBeHashed) pure internal returns(bytes32){
-        return keccak256(abi.encodePacked(toBeHashed[0],toBeHashed[1],toBeHashed[2]));
+        return keccak256(abi.encodePacked(dernierNonce, equilibreA, equilibreB));
     }
 
 }
