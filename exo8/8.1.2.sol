@@ -18,4 +18,21 @@ contract CanalDePaiement{
         partieB = _partieB;
         etat = EtatCanal.VIDE;
     }
+    
+    function financer() payable public{
+        require(msg.value == montant, "Montant incorrect");
+        bool A;
+        bool B;
+        if(msg.sender == partieA){
+            A = true;
+            equilibreA += montant;
+        }
+        if(msg.sender == partieB){
+            B = true;
+            equilibreB += montant;
+        }
+        if(A == true && B == true){
+            etat = EtatCanal.ACTIF;
+        }
+    }
 }
