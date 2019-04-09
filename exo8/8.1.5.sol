@@ -77,7 +77,7 @@ contract CanalDePaiement{
         require(block.number >= blocFermeture + contestation, "Veuillez attendre n blocs en temps de contestation");
         partieA.transfer(equilibreA);
         partieB.transfer(equilibreB);
-
+        etat = EtatCanal.FERME;
     }
 
 }
