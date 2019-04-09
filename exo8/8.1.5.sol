@@ -70,4 +70,14 @@ contract CanalDePaiement{
 
     }
 
+    
+    function solde() payable public{
+        require(msg.sender == partieA || msg.sender == partieB, "Vous n'avez pas le droit de demander le solde de ce canal");
+        require(etat == EtatCanal.ENCOURSFERMETURE, "Il vous faut d'abord fermer le canal");
+        require(block.number >= blocFermeture + contestation, "Veuillez attendre n blocs en temps de contestation");
+        partieA.transfer(equilibreA);
+        partieB.transfer(equilibreB);
+
+    }
+
 }
