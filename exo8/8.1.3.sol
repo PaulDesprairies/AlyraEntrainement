@@ -40,7 +40,4 @@ contract CanalDePaiement{
     function message(uint _dernierNonce, uint _equilibreA, uint _equilibreB) pure public returns(bytes32){
       return keccak256(abi.encodePacked(_dernierNonce, _equilibreA, _equilibreB)); 
     }
-
-
-
 }
