@@ -60,18 +60,20 @@ contract CanalDePaiement{
         bytes32 hash = message(_nonce, _equilibreA, _equilibreB);
         address signer = hash.recover(_signature);
         require(signer == partieA || signer == partieB, "La signature n'est pas la bonne");
+        require(_equilibrea + _equilibreB == montant);
         
         if (dernierNonce < _nonce){
             dernierNonce = _nonce;
             equilibreA = _equilibreA;
             equilibreB = _equilibreB;
+            contestation += block.number - blocFermeture;
         }
         
 
     }
 
     
-    function solde() payable public{
+    function solde() public{
         require(msg.sender == partieA || msg.sender == partieB, "Vous n'avez pas le droit de demander le solde de ce canal");
         require(etat == EtatCanal.ENCOURSFERMETURE, "Il vous faut d'abord fermer le canal");
         require(block.number >= blocFermeture + contestation, "Veuillez attendre n blocs en temps de contestation");
