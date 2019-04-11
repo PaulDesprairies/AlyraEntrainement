@@ -60,7 +60,7 @@ contract CanalDePaiement{
         bytes32 hash = message(_nonce, _equilibreA, _equilibreB);
         address signer = hash.recover(_signature);
         require(signer == partieA || signer == partieB, "La signature n'est pas la bonne");
-        require(_equilibrea + _equilibreB == montant);
+        require(_equilibrea + _equilibreB == montant, "les montants ne sont pas les bons");
         
         if (dernierNonce < _nonce){
             dernierNonce = _nonce;
